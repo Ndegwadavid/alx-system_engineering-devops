@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
+interfaces=$(ifconfig -a | awk '/inet / {print $2}')
 
-ip -4 addr show | grep inet | awk '{print $2}' | cut -d/ -f1
+for interface in $interfaces
+do
+  echo "$interface"
+done
