@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-interfaces=$(ifconfig -a | awk '/inet / {print $2}')
+# displays all active IPv4 IPs on the machine it is executed on
 
-for interface in $interfaces
-do
-  echo "$interface"
-done
+ifconfig | grep -Eo 'inet ([0-9]{1,3}\.?){4}' | cut -d ' ' -f 2
