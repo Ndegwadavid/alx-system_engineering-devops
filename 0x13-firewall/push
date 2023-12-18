@@ -1,0 +1,5 @@
+#!/bin/bash
+echo 'adding files to git'
+git add .
+git commit -m 'pushed'
+git push
