@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-# a python script that uses REST API for a given employee ID to display  TODO
+
+'''
+a python script that uses REST API for a given employee ID to display  TODO
+'''
 
 
 import requests
