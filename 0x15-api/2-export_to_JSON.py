@@ -1,47 +1,35 @@
 #!/usr/bin/python3
-'''Reads todo list from api for id passed and turns into json file'''
-
+"""
+Request from API; Return TODO list progress given employee ID
+Export this data to JSON
+"""
+from sys import argv
 import json
 import requests
-import sys
-
-base_url = 'https://jsonplaceholder.typicode.com/'
 
 
-def do_request():
-    '''Performs request'''
+def to_json():
+    """return API data"""
+    users = requests.get("http://jsonplaceholder.typicode.com/users")
+    for u in users.json():
+        if u.get('id') == int(argv[1]):
+            USERNAME = (u.get('username'))
+            break
+    TASK_STATUS_TITLE = []
+    todos = requests.get("http://jsonplaceholder.typicode.com/todos")
+    for t in todos.json():
+        if t.get('userId') == int(argv[1]):
+            TASK_STATUS_TITLE.append((t.get('completed'), t.get('title')))
 
-    if len(sys.argv) < 2:
-        return print('USAGE:', __file__, '<employee id>')
-    eid = sys.argv[1]
-    try:
-        _eid = int(sys.argv[1])
-    except ValueError:
-        return print('Employee id must be an integer')
-
-    response = requests.get(base_url + 'users/' + eid)
-    if response.status_code == 404:
-        return print('User id not found')
-    elif response.status_code != 200:
-        return print('Error: status_code:', response.status_code)
-    user = response.json()
-
-    response = requests.get(base_url + 'todos/')
-    if response.status_code != 200:
-        return print('Error: status_code:', response.status_code)
-    todos = response.json()
-    user_todos = [todo for todo in todos
-                  if todo.get('userId') == user.get('id')]
-    completed = [todo for todo in user_todos if todo.get('completed')]
-
-    user_todos = [{'task': todo.get('title'),
-                   'completed': todo.get('completed'),
-                   'username': user.get('username')}
-                  for todo in user_todos]
-    data = {eid: user_todos}
-    with open(eid + '.json', 'w') as file:
-        json.dump(data, file)
+    """export to json"""
+    t = []
+    for task in TASK_STATUS_TITLE:
+        t.append({"task": task[1], "completed": task[0], "username": USERNAME})
+    data = {str(argv[1]): t}
+    filename = "{}.json".format(argv[1])
+    with open(filename, "w") as f:
+        json.dump(data, f)
 
 
-if __name__ == '__main__':
-    do_request()
+if __name__ == "__main__":
+    to_json()
